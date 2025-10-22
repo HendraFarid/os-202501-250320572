@@ -69,13 +69,15 @@ D. **Eksperimen 3 – Mode User vs Kernel**
 
 ## Kode / Perintah
 Tuliskan potongan kode atau perintah utama:
-A. ```bash
-   strace ls
-   ```
-B. ```bash
+ ```bash
    strace -e trace=open,read,write,close cat /etc/passwd
    ```
-C. ```bash
+
+```bash
+   strace -e trace=open,read,write,close cat /etc/passwd
+   ```
+
+```bash
    dmesg | tail -n 10
    ```
 
@@ -94,88 +96,88 @@ Sertakan screenshot hasil percobaan atau diagram:
 ---
 
 ## Analisis
-- **EKSPERIMEN 1**
-10 perintah pertama :
-1. execve ("/usr/bin/ls", ["ls"], 0x7ffc3f991c40 /* 25 vers */)
-Fungsinya adalah menjalankan program ls (menampilkan isi direktori). Maka, dalam hal ini adalah direktori dari strace ls, melacak semua system call yang digunakan oleh ls untuk berinteraksi dengan kernel.
-2. brk(NULL)
-Fungsinya adalah mengatur program break (batas memori heap), hanya untuk mengetahui posisi awal heap. Program ls memeriksa atau menginisialisasi area memori heap.
-3. nmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP PRIVATE|MAP ANONYMOUS, -1, 0)
-Fungsinya ialah memetakan isi file /etc/ld.so.cache ke memori, file cache library dibaca langsung ke memori agar lookup library cepat.
-4. access("etc/ld.so.preload", R_OK)
-Fungsinya adalah mengecek apakah file /etc/ld.so.preload ada dan bisa dibaca.
+- EKSPERIMEN 1
+- 10 perintah pertama :
+- execve ("/usr/bin/ls", ["ls"], 0x7ffc3f991c40 /* 25 vers */)
+> Fungsinya adalah menjalankan program ls (menampilkan isi direktori). Maka, dalam hal ini adalah direktori dari strace ls, melacak semua system call yang digunakan oleh ls untuk berinteraksi dengan kernel.
+- brk(NULL)
+> Fungsinya adalah mengatur program break (batas memori heap), hanya untuk mengetahui posisi awal heap. Program ls memeriksa atau menginisialisasi area memori heap.
+- nmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP PRIVATE|MAP ANONYMOUS, -1, 0)
+> Fungsinya ialah memetakan isi file /etc/ld.so.cache ke memori, file cache library dibaca langsung ke memori agar lookup library cepat.
+- access("etc/ld.so.preload", R_OK)
+> Fungsinya adalah mengecek apakah file /etc/ld.so.preload ada dan bisa dibaca.
 File ini digunakan oleh dynamic linker (ld.so) untuk memuat library tambahan sebelum library lain.
-5. openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC)
-Fungsinya adalah membuka file /etc/ld.so.cache yang berisi cache lokasi library dinamis agar loading lebih cepat.
-6. read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\1\0\0\0\0\0\0\0\0\0\0\0"..., 832)
-Fungsinya adalah menjadi langkah awal ketika loader membaca struktur biner program “ls” untuk dijalankan.
-7. fstat(3, st_mode=S_IFREG|0644, st_size=17515, ...))
-Fungsinya adalah mengetahui file (descriptor 3), mengetahui jenis file dan izin, serta ukuran file. 
-8. map(NULL, 17515, PROT_READ, MAP_PRIVATE, 3, 0)
-Fungsinya adalah memetakan file yang dibuka dengan deskriptor 3 ke memori sebesar 17.515 byte mulai dari awal file, hanya untuk dibaca, dan gunakan mode privat (tidak mengubah file asli). Biarkan kernel memilih lokasi memori.
-9. close(3)
-Fungsinya adalah menutup file descriptor nomor 3.
+- openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC)
+> Fungsinya adalah membuka file /etc/ld.so.cache yang berisi cache lokasi library dinamis agar loading lebih cepat.
+- read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\1\0\0\0\0\0\0\0\0\0\0\0"..., 832)
+> Fungsinya adalah menjadi langkah awal ketika loader membaca struktur biner program “ls” untuk dijalankan.
+-  fstat(3, st_mode=S_IFREG|0644, st_size=17515, ...))
+> Fungsinya adalah mengetahui file (descriptor 3), mengetahui jenis file dan izin, serta ukuran file. 
+- map(NULL, 17515, PROT_READ, MAP_PRIVATE, 3, 0)
+> Fungsinya adalah memetakan file yang dibuka dengan deskriptor 3 ke memori sebesar 17.515 byte mulai dari awal file, hanya untuk dibaca, dan gunakan mode privat (tidak mengubah file asli). Biarkan kernel memilih lokasi memori.
+- close(3)
+> Fungsinya adalah menutup file descriptor nomor 3.
 
-- **EKSPERIMEN 2**
-close(3)		= 0
-read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\0\3\0>\1\0\0\0\220\234\2\0\0\0\0\0"..., 832)
-close (3)		= 0
-read(3, "# Locale name alias data base.\n#"..., 4096) = 2996
-read(3, **, 4096)	= 0 
-close(3)		= 0 
-read(3, "root:x:0:0:root/root:/bin/bash\n"..., 131072) = 1426 
-write(1, "root:x:0:0:root:/root:/bin/bash\n"..., 1426root:x:0:0:root:/root:/bin/bash
-daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
-…
-…
-) = 1426 
-read(3, **, 131072)	= 0
-close(3)		= 0
-close(1)		= 0
-close(2)		= 0
+- EKSPERIMEN 2
+- close(3)		= 0
+- read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\0\3\0>\1\0\0\0\220\234\2\0\0\0\0\0"..., 832)
+- close (3)		= 0
+- read(3, "# Locale name alias data base.\n#"..., 4096) = 2996
+- read(3, **, 4096)	= 0 
+- close(3)		= 0 
+- read(3, "root:x:0:0:root/root:/bin/bash\n"..., 131072) = 1426 
+- write(1, "root:x:0:0:root:/root:/bin/bash\n"..., 1426root:x:0:0:root:/root:/bin/bash
+- daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+- …
+- …
+- ) = 1426 
+- read(3, **, 131072)	= 0
+- close(3)		= 0
+- close(1)		= 0
+- close(2)		= 0
 
 
-close(3) = 0
-Menutup file descriptor 3. = 0 artinya sukses (0 = tidak ada error).
+- close(3) = 0
+> Menutup file descriptor 3. = 0 artinya sukses (0 = tidak ada error).
 
-read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\0\3\0>\1\0\0\0\220\234\2\0\0\0\0\0"..., 832)
-Membaca sampai 832 byte dari FD 3. isi buffer dimulai dengan \177ELF 
+- read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\0\3\0>\1\0\0\0\220\234\2\0\0\0\0\0"..., 832)
+> Membaca sampai 832 byte dari FD 3. isi buffer dimulai dengan \177ELF 
 
-close (3) = 0
-Menutup FD 3 lagi (sukses).
+- close (3) = 0
+> Menutup FD 3 lagi (sukses).
 
-read(3, "# Locale name alias data base.\n#"..., 4096) = 2996
-Membaca file lain. = 2996 berarti 2996 byte berhasil dibaca.
+- read(3, "# Locale name alias data base.\n#"..., 4096) = 2996
+> Membaca file lain. = 2996 berarti 2996 byte berhasil dibaca.
 
-read(3, **, 4096) = 0
-Membaca lagi dari FD 3 tapi mengembalikan 0 → end-of-file (EOF). 
+- read(3, **, 4096) = 0
+> Membaca lagi dari FD 3 tapi mengembalikan 0 → end-of-file (EOF). 
 
-close(3) = 0
-Menutup FD 3 (sukses).
+- close(3) = 0
+> Menutup FD 3 (sukses).
 
-read(3, "root:x:0:0:root/root:/bin/bash\n"..., 131072) = 1426
-Membaca dari FD 3. Diminta buffer besar (131072) tapi terbaca 1426 byte — ukuran isi yang dibaca.
+- read(3, "root:x:0:0:root/root:/bin/bash\n"..., 131072) = 1426
+> Membaca dari FD 3. Diminta buffer besar (131072) tapi terbaca 1426 byte — ukuran isi yang dibaca.
 
-write(1, "root:x:0:0:root:/root:/bin/bash\n"..., 1426root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin … ) = 1426
-...
-...
-Menulis ke FD 1 (stdout) sejumlah 1426 byte — yaitu isi file passwd tadi. = 1426 menunjukkan jumlah byte yang benar-benar ditulis. Isi file "daemon". (...), file-file lain.
+- write(1, "root:x:0:0:root:/root:/bin/bash\n"..., 1426root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin … ) = 1426
+- ...
+- ...
+> Menulis ke FD 1 (stdout) sejumlah 1426 byte — yaitu isi file passwd tadi. = 1426 menunjukkan jumlah byte yang benar-benar ditulis. Isi file "daemon". (...), file-file lain.
 
-read(3, **, 131072) = 0
-Baca lagi dari FD 3 → 0 (EOF). 
+- read(3, **, 131072) = 0
+> Baca lagi dari FD 3 → 0 (EOF). 
 
-close(3) = 0
-Menutup FD 3.
+- close(3) = 0
+> Menutup FD 3.
 
-close(1) = 0
-Menutup stdout (FD 1). Sukses.
+- close(1) = 0
+> Menutup stdout (FD 1). Sukses.
 
-close(2) = 0
-Menutup stderr (FD 2). Sukses.
+- close(2) = 0
+> Menutup stderr (FD 2). Sukses.
 
-- **EKSPERIMEN 3** 
-dmesg | tail -n 10
-Berfungsi untuk menampilkan 10 baris terakhir dari log kernel (pesan yang dihasilkan oleh kernel Linux).
+- EKSPERIMEN 3
+- dmesg | tail -n 10
+> Berfungsi untuk menampilkan 10 baris terakhir dari log kernel (pesan yang dihasilkan oleh kernel Linux).
 dmesg (display message), menampilkan pesan-pesan dari kernel ring buffer, yaitu catatan aktivitas yang dibuat oleh kernel sejak sistem boot.
 tail -n 10, hanya menampilkan 10 baris terakhir dari output tersebut.
 Bedanya dengan output program biasa, perintah dmesg | tail -n 10 menampilkan informasi sistem tingkat rendah, bukan data atau hasil proses aplikasi pengguna.
