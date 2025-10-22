@@ -97,7 +97,6 @@ Sertakan screenshot hasil percobaan atau diagram:
 
 ## Analisis
 - EKSPERIMEN 1
-- 10 perintah pertama :
 - execve ("/usr/bin/ls", ["ls"], 0x7ffc3f991c40 /* 25 vers */)
 > Fungsinya adalah menjalankan program ls (menampilkan isi direktori). Maka, dalam hal ini adalah direktori dari strace ls, melacak semua system call yang digunakan oleh ls untuk berinteraksi dengan kernel.
 - brk(NULL)
