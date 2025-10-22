@@ -84,8 +84,11 @@ C. ```bash
 ## Hasil Eksekusi
 Sertakan screenshot hasil percobaan atau diagram:
 ![Screenshot hasil](<screenshots/syscall_ls.png>)
+
 ![Screenshot hasil](<screenshots/syscall_ls_1.png>)
+
 ![Screenshot hasil](<screenshots/syscall_ls_2.png>)
+
 ![Screenshot hasil](<screenshots/syscall_ls_3.png>)
 
 ---
