@@ -1,78 +1,234 @@
 
-# Laporan Praktikum Minggu [X]
-Topik: [Tuliskan judul topik, misalnya "Arsitektur Sistem Operasi dan Kernel"]
+# Laporan Praktikum Minggu 5
+Topik: Penjadwalan CPU – FCFS dan SJF  
 
 ---
 
 ## Identitas
-- **Nama**  : [Nama Mahasiswa]  
-- **NIM**   : [NIM Mahasiswa]  
-- **Kelas** : [Kelas]
+- **Nama**  : Hendra Farid Hidayat
+- **NIM**   : 250320572  
+- **Kelas** : 1DSRA
 
 ---
 
 ## Tujuan
-Tuliskan tujuan praktikum minggu ini.  
-Contoh:  
-> Mahasiswa mampu menjelaskan fungsi utama sistem operasi dan peran kernel serta system call.
+> 1. Menghitung *waiting time* dan *turnaround time* untuk algoritma FCFS dan SJF.  
+> 2. Menyajikan hasil perhitungan dalam tabel yang rapi dan mudah dibaca.  
+> 3. Membandingkan performa FCFS dan SJF berdasarkan hasil analisis.  
+> 4. Menjelaskan kelebihan dan kekurangan masing-masing algoritma.  
+> 5. Menyimpulkan kapan algoritma FCFS atau SJF lebih sesuai digunakan.  
+
 
 ---
 
 ## Dasar Teori
-Tuliskan ringkasan teori (3–5 poin) yang mendasari percobaan.
+1. Konsep Penjadwalan CPU, penjadwalan CPU menentukan urutan eksekusi proses untuk memaksimalkan efisiensi sistem dan pemanfaatan prosesor (Silberschatz et al., 2018).
+2. Algoritma FCFS (First Come, First Served), menjalankan proses sesuai urutan kedatangan. Sederhana namun dapat menyebabkan convoy effect ketika proses panjang menghambat proses lain (Tanenbaum & Bos, 2015).
+3. Algoritma SJF (Shortest Job First), memilih proses dengan waktu eksekusi terpendek terlebih dahulu. Memberikan average waiting time terbaik, tetapi dapat menyebabkan starvation untuk proses panjang (Silberschatz et al., 2018; OSTEP, 2018).
+4. Evaluasi Kinerja, kinerja algoritma diukur melalui waiting time dan turnaround time rata-rata untuk menentukan efisiensi (Silberschatz et al., 2018).
 
 ---
 
 ## Langkah Praktikum
-1. Langkah-langkah yang dilakukan.  
-2. Perintah yang dijalankan.  
-3. File dan kode yang dibuat.  
-4. Commit message yang digunakan.
+1. Siapkan Data Proses Gunakan tabel proses berikut sebagai contoh (boleh dimodifikasi dengan data baru):
 
----
+| **Proses** | **Burst Time** | **Arrival Time** |
+| :--------- | :------------: | :--------------: |
+| P1         |        6       |         0        |
+| P2         |        8       |         1        |
+| P3         |        7       |         2        |
+| P4         |        3       |         3        |
 
-## Kode / Perintah
-Tuliskan potongan kode atau perintah utama:
-```bash
-uname -a
-lsmod | head
-dmesg | head
+2. **Eksperimen 1 – FCFS (First Come First Served)**
+   
+   - Urutkan proses berdasarkan Arrival Time.
+   - Hitung nilai berikut untuk tiap proses:
+```
+Waiting Time (WT) = waktu mulai eksekusi - Arrival Time
+Turnaround Time (TAT) = WT + Burst Time
+```
+   - Hitung rata-rata Waiting Time dan Turnaround Time.
+   - Buat Gantt Chart sederhana:
+```
+| P1 | P2 | P3 | P4 |
+0    6    14   21   24
+```
+3. **Eksperimen 2 – SJF (Shortest Job First)**
+   
+   - Urutkan proses berdasarkan Burst Time terpendek (dengan memperhatikan waktu kedatangan).
+   - Lakukan perhitungan WT dan TAT seperti langkah sebelumnya.
+   - Bandingkan hasil FCFS dan SJF pada tabel berikut:
+
+| **Algoritma** | **Avg Waiting Time** | **Avg Turnaround Time** | **Kelebihan**                  | **Kekurangan**                            |
+| :------------ | :------------------: | :---------------------: | :----------------------------- | :---------------------------------------- |
+| FCFS          |         ...          |           ...           | Sederhana dan mudah diterapkan | Tidak efisien untuk proses panjang        |
+| SJF           |         ...          |           ...           | Optimal untuk job pendek       | Menyebabkan *starvation* pada job panjang |
+
+4. **Eksperimen 3 – Visualisasi Spreadsheet (Opsional)**
+   - Gunakan Excel/Google Sheets untuk membuat perhitungan otomatis:
+     - Kolom: Arrival, Burst, Start, Waiting, Turnaround, Finish.
+     - Gunakan formula dasar penjumlahan/subtraksi.
+   - Screenshot hasil perhitungan dan simpan di:
+```
+praktikum/week5-scheduling-fcfs-sjf/screenshots/
 ```
 
+5. **Analisis**
+   - Bandingkan hasil rata-rata WT dan TAT antara FCFS & SJF.
+   - Jelaskan kondisi kapan SJF lebih unggul dari FCFS dan sebaliknya.
+   - Tambahkan kesimpulan singkat di akhir laporan.
+
+6. **Commit & Push**
+```
+git add .
+git commit -m "Minggu 5 - CPU Scheduling FCFS & SJF"
+git push origin main
+```
 ---
 
 ## Hasil Eksekusi
 Sertakan screenshot hasil percobaan atau diagram:
-![Screenshot hasil](screenshots/example.png)
+![Screenshot hasil](<screenshots/scheduling_fcfs_sjf.png>)
 
 ---
 
 ## Analisis
 - Jelaskan makna hasil percobaan.  
-- Hubungkan hasil dengan teori (fungsi kernel, system call, arsitektur OS).  
-- Apa perbedaan hasil di lingkungan OS berbeda (Linux vs Windows)?  
+```
+Makna Hasil FCFS (First Come First Served), beberapa poin diantaranya :
+- Proses dijalankan berdasarkan urutan kedatangan (Arrival Time).
+- Proses yang datang lebih dulu akan dieksekusi lebih dulu tanpa memperhatikan waktu eksekusi (Burst Time).
+
+Berdasarkan hasil dari tabel percobaan:
+- Urutan eksekusi: P1 → P2 → P3 → P4
+- Waktu tunggu rata-rata = 8,75
+- Turnaround time rata-rata = 14,75
+
+Jadi, dapat dikatakan bahwa FCFS sederhana namun kurang efisien jika ada proses dengan waktu eksekusi panjang datang lebih dulu, proses lain harus menunggu lama.
+
+Makna Hasil SJF (Shortest Job First), beberapa poin diantaranya :
+- Proses dijalankan berdasarkan Burst Time paling pendek di antara proses yang sudah datang.
+
+Berdasarkan hasil dari tabel percobaan: 
+- Urutan eksekusi: P1 → P2 → P3 → P4
+- Waktu tunggu rata-rata = 6,25
+- Turnaround time rata-rata = 12,25
+
+Jadi, dapat dikatakan bahwa dengan memilih proses berdurasi pendek terlebih dahulu, total waktu tunggu dan turnaround menjadi lebih kecil. Algoritma ini lebih efisien daripada FCFS dalam rata-rata waktu eksekusi. Namun, kekurangannya adalah jika proses pendek terus datang, proses panjang bisa tertunda.
+```
 
 ---
 
 ## Kesimpulan
-Tuliskan 2–3 poin kesimpulan dari praktikum ini.
+1. FCFS menunjukkan kesederhanaan implementasi namun kurang optimal dalam penjadwalan.
+2. SJF memilih proses dengan waktu eksekusi (burst time) paling pendek terlebih dahulu, sehingga waktu tunggu rata-rata biasanya lebih kecil dibanding FCFS.
+3. SJF lebih efisien dalam penggunaan CPU, tetapi FCFS lebih sederhana dan mudah diimplementasikan karena tidak memerlukan perkiraan burst time proses.
+
+---
+
+## Tugas 
+1. Hitung waiting time dan turnaround time dari minimal 2 skenario FCFS dan SJF
+- Skenario 1
+  - FCFS
+\
+  Waiting Time: 8,75
+\
+Turnaround Time: 14,75
+
+  - SJF
+\
+  Waiting Time: 6,25
+\
+Turnaround Time: 12,25
+
+- Skenario 2
+  - FCFS
+\
+  Waiting Time: 3,75
+\
+Turnaround Time: 7,25
+
+  - SJF
+\
+  Waiting Time: 3,25
+\
+Turnaround Time: 6,75
+
+
+2. Sajikan hasil perhitungan dalam tabel perbandingan (FCFS vs SJF).
+   
+ FCFS
+     
+| **Proses**    | **Burst Time** | **Arrival Time** | **Start** | **Waiting Time** | **Turnaround Time** | **Finish** |
+| ------------- | -------------- | ---------------- | --------- | ---------------- | ------------------- | ---------- |
+| P1            | 6              | 0                | 0         | 0                | 6                   | 6          |
+| P2            | 8              | 1                | 6         | 5                | 13                  | 14         |
+| P3            | 7              | 2                | 14        | 12               | 19                  | 21         |
+| P4            | 3              | 3                | 21        | 18               | 21                  | 24         |
+| **Total**     |                |                  |           | **35**           | **59**              |            |
+| **Rata-Rata** |                |                  |           | **8,75**         | **14,75**           |            |
+
+   SJF
+   
+| **Proses**    | **Burst Time** | **Arrival Time** | **Start** | **Waiting Time** | **Turnaround Time** | **Finish** |
+| ------------- | -------------- | ---------------- | --------- | ---------------- | ------------------- | ---------- |
+| P1            | 6              | 0                | 0         | 0                | 6                   | 6          |
+| P2            | 3              | 3                | 6         | 3                | 6                   | 9          |
+| P3            | 7              | 2                | 9         | 7                | 14                  | 16         |
+| P4            | 8              | 1                | 16        | 15               | 23                  | 24         |
+| **Total**     |                |                  |           | **25**           | **49**              |            |
+| **Rata-Rata** |                |                  |           | **6,25**         | **12,25**           |            |
+
+ - Skenario 2
+
+  FCFS
+
+| **Proses**    | **Burst Time** | **Arrival Time** | **Start** | **Waiting Time** | **Turnaround Time** | **Finish** |
+| ------------- | -------------- | ---------------- | --------- | ---------------- | ------------------- | ---------- |
+| P1            | 4              | 0                | 0         | 0                | 4                   | 4          |
+| P2            | 2              | 1                | 4         | 3                | 5                   | 6          |
+| P3            | 5              | 2                | 6         | 4                | 9                   | 11         |
+| P4            | 3              | 3                | 11        | 8                | 11                  | 14         |
+| **Total**     |                |                  |           | **15**           | **29**              |            |
+| **Rata-Rata** |                |                  |           | **3,75**         | **7,25**            |            |
+
+SJF
+
+| **Proses**    | **Burst Time** | **Arrival Time** | **Start** | **Waiting Time** | **Turnaround Time** | **Finish** |
+| ------------- | -------------- | ---------------- | --------- | ---------------- | ------------------- | ---------- |
+| P1            | 4              | 0                | 0         | 0                | 4                   | 4          |
+| P2            | 2              | 3                | 4         | 1                | 3                   | 6          |
+| P3            | 3              | 2                | 6         | 4                | 7                   | 9          |
+| P4            | 5              | 1                | 9         | 8                | 13                  | 14         |
+| **Total**     |                |                  |           | **13**           | **27**              |            |
+| **Rata-Rata** |                |                  |           | **3,25**         | **6,75**            |            |
+
+
+3. Analisis kelebihan dan kelemahan tiap algoritma!
+
+| **Algoritma**                      | **Kelebihan**                                                                                                      | **Kelemahan**                                                                                                                                             |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **FCFS (First Come First Served)** | - Algoritma yang paling sederhana.<br>- Skemanya adil karena proses yang datang lebih dulu mendapat prioritas CPU. | - *Terjadi convoy effect*, yaitu proses kecil harus menunggu proses besar selesai.<br>- Tidak efisien untuk sistem dengan banyak proses kecil.            |
+| **SJF (Shortest Job First)**       | - Paling optimal karena memberikan minimum waiting time untuk kumpulan proses yang mengantri.                  | - Tidak dapat digunakan untuk penjadwalan CPU short-term secara efektif.<br>- Sulit diterapkan jika waktu eksekusi proses tidak diketahui sebelumnya. |
 
 ---
 
 ## Quiz
-1. [Pertanyaan 1]  
-   **Jawaban:**  
-2. [Pertanyaan 2]  
-   **Jawaban:**  
-3. [Pertanyaan 3]  
-   **Jawaban:**  
+1. Apa perbedaan utama antara FCFS dan SJF?   
+   **Jawaban:** FCFS menjalankan proses berdasarkan urutan kedatangan. Sedangkan, SJF menjalankan proses berdasarkan waktu eksekusi paling pendek — proses dengan durasi terpendek dieksekusi lebih dulu, tanpa melihat kapan datangnya.
+2. Mengapa SJF dapat menghasilkan rata-rata waktu tunggu minimum?  
+   **Jawaban:** Algoritma SJF secara teoritis memberikan waktu tunggu rata-rata paling kecil dibandingkan algoritma lainnya. Hal ini karena proses dengan burst time pendek dieksekusi terlebih dahulu, sehingga proses-proses cepat segera selesai dan tidak menunggu proses panjang. Proses panjang memang menunggu lebih lama, tetapi total waktu tunggu keseluruhan tetap minimum.
+3. Apa kelemahan SJF jika diterapkan pada sistem interaktif?  
+   **Jawaban:** Kelemahan SJF jika diterapkan pada sistem interaktif adalah sifat non-preemptifnya yang dapat menyebabkan proses yang lebih panjang jika selalu ada proses yang lebih pendek yang tiba dalam antrean.
 
 ---
 
 ## Refleksi Diri
 Tuliskan secara singkat:
-- Apa bagian yang paling menantang minggu ini?  
-- Bagaimana cara Anda mengatasinya?  
+- Apa bagian yang paling menantang minggu ini?
+> Cara memahami scheduling CPU dan membuat table perhitungan FCFS dan SJF.
+- Bagaimana cara Anda mengatasinya?
+> Belajar menggunakan referensi terkait materi dan mencoba mengulangi dalam praktik.
 
 ---
 
