@@ -21,7 +21,9 @@ Topik: Simulasi dan Deteksi Deadlock
 ---
 
 ## Dasar Teori
-Tuliskan ringkasan teori (3–5 poin) yang mendasari percobaan.
+1. Menurut Silberschatz, Deadlock adalah kondisi global system state, bukan kesalahan lokal satu proses. Implikasinya adalah simulasi akan membantu untuk mencegah terjadinya deadlock di masa depan.
+2. Berdasarkan OSTEP sistem dibagi menjadi, safe state, yaitu masih ada urutan eksekusi yang memungkinkan semua proses selesai. Unsafe state, berpotensi deadlock. Deadlock state, tidak ada urutan yang memungkinkan progres.
+3. Menurut OSTEP, simulasi dilakukan karena, pencegahan berisfat mahal dan tidak fleksibel. Penghindaran memerlukan info maksimum (Banker’s Algorithm) sehingga kurang efisien. Deteksi dan recovery, lebih realistis untuk sistem umum
 
 ---
 
@@ -71,30 +73,93 @@ Tuliskan ringkasan teori (3–5 poin) yang mendasari percobaan.
 ---
 
 ## Kode / Perintah
-Tuliskan potongan kode atau perintah utama:
-```bash
-uname -a
-lsmod | head
-dmesg | head
+```
+processes = {
+    "P1": {"allocation": "R1", "request": "R2"},
+    "P2": {"allocation": "R2", "request": "R3"},
+    "P3": {"allocation": "R3", "request": "R1"},
+}
+
+wait_for_graph = {}
+
+for p1, data1 in processes.items():
+    wait_for_graph[p1] = []
+    for p2, data2 in processes.items():
+        if data1["request"] == data2["allocation"]:
+            wait_for_graph[p1].append(p2)
+
+def detect_cycle(graph):
+    visited = set()
+    stack = set()
+
+    def dfs(node):
+        if node in stack:
+            return True
+        if node in visited:
+            return False
+
+        visited.add(node)
+        stack.add(node)
+
+        for neighbor in graph[node]:
+            if dfs(neighbor):
+                return True
+
+        stack.remove(node)
+        return False
+
+    for node in graph:
+        if dfs(node):
+            return True
+    return False
+
+print("Wait-For Graph:")
+for p, waits in wait_for_graph.items():
+    print(f"{p} -> {waits}")
+
+if detect_cycle(wait_for_graph):
+    print("\n⚠️ Deadlock TERDETEKSI!")
+else:
+    print("\n✅ Tidak ada deadlock.")
 ```
 
 ---
 
 ## Hasil Eksekusi
-Sertakan screenshot hasil percobaan atau diagram:
-![Screenshot hasil](screenshots/example.png)
+![Screenshot hasil](<screenshots/deadlock_detection.png>)
 
 ---
 
 ## Analisis
-- Jelaskan makna hasil percobaan.  
-- Hubungkan hasil dengan teori (fungsi kernel, system call, arsitektur OS).  
-- Apa perbedaan hasil di lingkungan OS berbeda (Linux vs Windows)?  
+- Sajikan hasil deteksi dalam tabel (proses deadlock / tidak).
+Berdasarkan simulasi wait-for graph, hasilnya sebagai berikut:
+| Proses | Menunggu Proses |  Status  |
+| :----: | :-------------: | :------: |
+|   P1   |        P2       | Deadlock |
+|   P2   |        P3       | Deadlock |
+|   P3   |        P1       | Deadlock |
+ 
+- Jelaskan mengapa deadlock terjadi atau tidak terjadi.
+Terjadi karena adanya kondisi circular wait.
+Terjadi kondisi:
+P1 menahan R1, menunggu R2 (dipegang P2)
+P2 menahan R2, menunggu R3 (dipegang P3)
+P3 menahan R3, menunggu R1 (dipegang P1)
+Sehingga, membentuk rantai ketergantungan melingkar: P1 → P2 → P3 → P1. Karena, tidak ada proses yang bisa maju tanpa resource yang dipegang proses lain, maka semua proses berhenti selamanya dan deadlock terjadi.
+- Kaitkan hasil dengan teori deadlock (empat kondisi).
+Menurut teori deadlock (Silberschatz & Tanenbaum), deadlock terjadi jika dan hanya jika keempat kondisi berikut terpenuhi secara bersamaan:
+|  No | Kondisi Deadlock     | Terpenuhi? | Penjelasan                                                  |
+| :-: | :------------------- | :--------: | :---------------------------------------------------------- |
+|  1  | **Mutual Exclusion** |    ✅ Ya    | Resource (R1, R2, R3) hanya bisa dipakai satu proses        |
+|  2  | **Hold and Wait**    |    ✅ Ya    | Proses memegang satu resource sambil menunggu resource lain |
+|  3  | **No Preemption**    |    ✅ Ya    | Resource tidak bisa diambil paksa dari proses               |
+|  4  | **Circular Wait**    |    ✅ Ya    | P1 → P2 → P3 → P1                                           |
 
 ---
 
 ## Kesimpulan
-Tuliskan 2–3 poin kesimpulan dari praktikum ini.
+1. Simulasi deteksi deadlock diperlukan karena sistem operasi tidak dapat mengetahui secara pasti apakah suatu alokasi sumber daya akan menyebabkan deadlock di masa depan sehingga simulasi dilakukan untuk mendeteksi ada/tidaknya deadlock supaya tidak terjadi di masa depan.
+2. Kondisi deadlock terjadi hanya jika keempat kondisi (syarat) terpenuhi.
 
 ---
 
